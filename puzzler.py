@@ -9,6 +9,7 @@ class Puzzler:
         self.length = length
         self.fast_count = False if fast_count.lower().startswith('y') else True
         self.depth = depth
+        self.total_pattern_count = 2**(self.length*self.depth)
         self.good_patterns = 0
         self.partitions = [rgs(i) for i in range(0, length + 1)]
         self.rows = [r.Row(i, self.length, self.partitions) for i in range(0, 2**length)]
@@ -35,8 +36,8 @@ class Puzzler:
                 file.write(f"Preparing file for debug...\n\n")
             self.count_patterns()
 
-        print(f"\nThere are {self.good_patterns} patterns in a [{self.length} x {self.depth}] nurikabe game. There were {2**self.length**2} possible patterns.\n")
-        print(f"{self.good_patterns / 2**self.length**2:.{self.length - 2}%} were good patterns.\n")
+        print(f"\nThere are {self.good_patterns} patterns in a [{self.length} x {self.depth}] nurikabe game. There were {self.total_pattern_count} possible patterns.\n")
+        print(f"{self.good_patterns / self.total_pattern_count:.{self.length - 2}%} were good patterns.\n")
 
     
     def count_patterns(self):
