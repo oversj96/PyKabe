@@ -38,35 +38,7 @@ class Puzzler:
         print(f"\nThere are {self.good_patterns} patterns in a [{self.length} x {self.depth}] nurikabe game. There were {2**self.length**2} possible patterns.\n")
         print(f"{self.good_patterns / 2**self.length**2:.{self.length - 2}%} were good patterns.\n")
 
-    # It's not enough to generate all the partitions of a set
-    # the proper successor partition must be chosen for all rows that work.
-    def test_sets(self):
-        pass
-
-
-    def count_subrow_successors(self):
-        for i in range(0, len(self.rows)):
-            for j in range(0, len(self.rows[i].schemes)):               
-                self.good_patterns += self.rows[i].schemes[j].traverse(1, self.depth)
-                #self.good_patterns += self.rows[i].schemes[j].traverse_debug_better(['' for i in range(0, self.depth)], 1, self.depth)
-
-        # for row in self.rows:
-        #     for subrow in row.schemes:
-        #         self.good_patterns += subrow.traverse(1, self.depth)
-
-    # Solves the puzzles in exponential time and is no more efficient than other solutions
-    # But outputs puzzles for debugging
-    def debug_count_patterns(self):
-        for row in self.rows:
-            for scheme in row.schemes:
-                if not scheme.partition_scheme:
-                    self.good_patterns += scheme.traverse_debug(True, ['' for i in range(0, self.depth)], 1, self.depth)
-                else:
-                    if max(scheme.partition_scheme) == len(scheme.segments) - 1:
-                        self.good_patterns += scheme.traverse_debug(True, ['' for i in range(0, self.depth)], 1, self.depth)
-
-    # Utilizes memoization and converts the problem into a polynomial time solution
-    # The loss in speed this time around comes from row mapping
+    
     def count_patterns(self):
         for row in self.rows:
             for scheme in row.schemes:
@@ -79,6 +51,8 @@ class Puzzler:
                     self.good_patterns += scheme.traverse(['' for i in range(0, self.depth)], water, False, 1, self.depth)
                     #self.good_patterns += scheme.traverse_with_memoization(water, False, 1, self.depth)
 
+    # Utilizes memoization and converts the problem into a polynomial time solution
+    # The loss in speed this time around comes from row mapping
     def count_patterns_memoized(self):
         for row in self.rows:
             for scheme in row.schemes:

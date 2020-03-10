@@ -213,65 +213,6 @@ class RowScheme:
         #print(f"Seed: {self.parent_row.seed}, Depth: {depth}, Count: {count}")
         return count
 
-
-        
-
-    def traverse_debug_better(self, shore, string, depth, base_depth):
-        '''Unoptimized, nonmemoized version of traverse function. Used to collect row bits for printing.'''
-        string[depth - 1] = self.parent_row
-        count = 0
-
-        if shore:
-            if self.partition_scheme:
-                shore = False
-
-        if depth == 1:
-            if depth != base_depth - 1:
-                if self.partition_scheme:
-                    for subrow in self.successors:
-                        if subrow.partition_scheme and max(subrow.partition_scheme) == len(subrow.segments) - 1:
-                            count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-                        elif not subrow.partition_scheme:
-                            count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-                else:
-                    for subrow in self.successors:
-                        if subrow.partition_scheme and max(subrow.partition_scheme) == len(subrow.segments) - 1:
-                            count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-            else:
-                for subrow in self.finalizers:
-                    count += 1
-                    string[depth] = subrow.parent_row
-                    self.print_row_string(string)
-        else:
-            if depth != base_depth - 1:
-                if self.partition_scheme:
-                    for subrow in self.successors:
-                        count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-                else:
-                    if shore:
-                        for subrow in self.successors:
-                            if subrow.partition_scheme and max(subrow.partition_scheme) == len(subrow.segments) - 1:
-                                count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-                            else:
-                                count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-                    else:
-                        for subrow in self.successors:
-                            count += subrow.traverse_debug_better(shore, string.copy(), depth + 1, base_depth)
-            else:
-                for subrow in self.finalizers:
-                    count += 1
-                    string[depth] = subrow.parent_row
-                    self.print_row_string(string)
-
-        return count
-
-    def traverse_three(self, string, depth, base_depth):
-        count = 0
-
-        if depth == 1:
-            for subrow in self.finalizers:
-                pass
-
     def print_row_string(self, string):
         with open("debug.txt", 'a') as file:
             RowScheme.debug_count += 1
