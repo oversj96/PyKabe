@@ -98,5 +98,3 @@ if __name__ == "__main__":
     puzzler = Puzzler(int(input("Please enter the row length of the puzzle: ")),
                       int(input("Please enter the depth/row count of the puzzle: ")),
                       input("Use debugger? Warning: this will dramatically slow the counting process to exponential speed! [y/n]: "))
-    print(puzzler.good_patterns)
-    print("test")
