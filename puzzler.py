@@ -32,11 +32,11 @@ class Puzzler:
             self.count_patterns_memoized()
         else:
             print("using debugger functions...\n")
-            with open("debug.txt", 'w') as file:
+            with open(f"debug_[{self.depth}x{self.length}].txt", 'w') as file:
                 file.write(f"Preparing file for debug...\n\n")
             self.count_patterns()
 
-        print(f"\nThere are {self.good_patterns} patterns in a [{self.length} x {self.depth}] nurikabe game. There were {self.total_pattern_count} possible patterns.\n")
+        print(f"\nThere are {self.good_patterns} patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count} possible patterns.\n")
         print(f"{self.good_patterns / self.total_pattern_count:.{self.length - 2}%} were good patterns.\n")
 
     

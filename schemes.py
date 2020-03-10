@@ -214,7 +214,9 @@ class RowScheme:
         return count
 
     def print_puzzle(self, string):
-        with open("debug.txt", 'a') as file:
+        length = len(string[0].bits)
+        depth = len(string)
+        with open(f"debug_[{depth}x{length}].txt", 'a') as file:
             RowScheme.debug_count += 1
             file.write(f"{RowScheme.debug_count}\n")
             for row in string:
