@@ -172,7 +172,7 @@ class RowScheme:
         if end:
             if depth == base_depth - 1:
                 string[depth] = self.parent_row
-                self.print_row_string(string)
+                self.print_puzzle(string)
                 count += 1
             else:
                 count += self.traverse(string, water, end, depth + 1, base_depth)
@@ -185,11 +185,11 @@ class RowScheme:
                 if end:
                     if finalizer.is_final_row:
                         string[depth] = finalizer.parent_row
-                        self.print_row_string(string)
+                        self.print_puzzle(string)
                         count += 1
                 else:
                         string[depth] = finalizer.parent_row
-                        self.print_row_string(string)
+                        self.print_puzzle(string)
                         count += 1
 
         elif depth != base_depth - 1:
@@ -213,7 +213,7 @@ class RowScheme:
         #print(f"Seed: {self.parent_row.seed}, Depth: {depth}, Count: {count}")
         return count
 
-    def print_row_string(self, string):
+    def print_puzzle(self, string):
         with open("debug.txt", 'a') as file:
             RowScheme.debug_count += 1
             file.write(f"{RowScheme.debug_count}\n")
