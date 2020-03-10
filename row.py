@@ -2,6 +2,7 @@ import schemes as sc
 import segment as s
 from part_tester import determine_part_set
 
+
 class Row:
 
 

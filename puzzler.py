@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import row as r
 from restrictive_growth_strings import restrictive_growth_strings as rgs
 
@@ -5,7 +7,7 @@ from restrictive_growth_strings import restrictive_growth_strings as rgs
 class Puzzler:
 
 
-    def __init__(self, length, depth, fast_count):
+    def __init__(self, depth, length, fast_count):
         self.length = length
         self.fast_count = False if fast_count.lower().startswith('y') else True
         self.depth = depth
@@ -31,12 +33,15 @@ class Puzzler:
             print("using memoization...\n")
             self.count_patterns_memoized()
         else:
+            path = Path.cwd() / 'debug'
             print("using debugger functions...\n")
-            with open(f"debug_[{self.depth}x{self.length}].txt", 'w') as file:
+            if not path.exists():
+                path.mkdir()
+            with open(f"debug\\debug_[{self.depth}x{self.length}].txt", 'w') as file:
                 file.write(f"Preparing file for debug...\n\n")
             self.count_patterns()
 
-        print(f"\nThere are {self.good_patterns} patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count} possible patterns.\n")
+        print(f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n")
         print(f"{self.good_patterns / self.total_pattern_count:.{self.length - 2}%} were good patterns.\n")
 
     

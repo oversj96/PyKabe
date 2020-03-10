@@ -1,5 +1,6 @@
-import segment as s
 import row
+import segment as s
+
 
 class RowScheme:
 
@@ -216,7 +217,7 @@ class RowScheme:
     def print_puzzle(self, string):
         length = len(string[0].bits)
         depth = len(string)
-        with open(f"debug_[{depth}x{length}].txt", 'a') as file:
+        with open(f"debug\\debug_[{depth}x{length}].txt", 'a') as file:
             RowScheme.debug_count += 1
             file.write(f"{RowScheme.debug_count}\n")
             for row in string:
@@ -227,6 +228,3 @@ class RowScheme:
                         file.write(f"0 ")
                 file.write(f"  {row.seed}\n")        
             file.write("\n")
-            
-
-        
