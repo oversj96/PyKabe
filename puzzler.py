@@ -81,7 +81,10 @@ def scrub_input_and_run():
                 raise ValueError("A number less than 2 was entered for either dimension, please try again.")
             else:
                 break
-    Puzzler(length, depth, debug)
+        except ValueError as ve:
+            print(ve)
+
+    p = Puzzler(length, depth, debug)
 
 
 if __name__ == "__main__":
