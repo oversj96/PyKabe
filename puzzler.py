@@ -23,7 +23,7 @@ class Puzzler:
         # Make each subrow aware of all other subrows
         print("\n")
         for top in self.rows:
-            print(f"Mapping sub rows... {top.seed / self.length:.2f}%", end="\r")
+            print(f"Mapping sub rows... {(top.seed / 2**self.length)*100:.2f}%", end="\r")
             for bottom in self.rows:
                 if not top.forms_pool(bottom) and top.is_trivially_contiguous(bottom):
                     r.map_subrows(top, bottom)

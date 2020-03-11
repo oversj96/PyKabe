@@ -29,36 +29,24 @@ def build_part_set(bottom_row, top_row_scheme):
     return new_set
 
 
-def determine_part_set(bottom_row, top_row_scheme):
-    # changed = [False for i in range(0, len(bottom_row.segments))]
 
-    # part_numbers = []
-    # new_set = [0 for i in range(0, len(bottom_row.segments))]
+def map_part_set(top_row_scheme, bottom_row):
+    bottom_connections = []
 
-    # for i in range(0, len(top_row_scheme.segments)):
-    #     segment_numbers = []
-    #     for j in range(0, len(bottom_row.segments)):
-    #         if top_row_scheme.segments[i].connects(bottom_row.segments[j]):
-    #             segment_numbers.append(j)
-    #     if segment_numbers:
-    #         part_numbers.append(segment_numbers.copy())
-    #     else:
-    #         part_numbers.append([])
-    #     del segment_numbers[:]
-        
-    # for i in range(0, len(bottom_row.segments)):
-    #     if not changed[i]:
-    #         for j in range(0, len(part_numbers)):
-    #             if part_numbers[j]:
-    #                 for k in range(0, len(part_numbers[j])):
-    #                     new_set[k] = i
-    #                     changed[k] = True
-    #             else:
-    #                 new_set[i] = i
-
-    # return new_set
+    for i in range(0, len(bottom_row.segments)):
+        conns = []
+        for j in range(0, len(top_row_scheme.segments)):
+            if top_row_scheme.segments[j].connects(bottom_row.segments[i]):
+                conns.append(j)
+        bottom_connections.append(conns.copy())
     
-    # We are interested in the set created given the scheme
+    partition_set = []
+    
+    for i in range(0, len(2)):
+        print()           
+    pass
+
+def determine_part_set(bottom_row, top_row_scheme):
 
     part_hit = [None for i in range(0, len(bottom_row.segments))]
 
