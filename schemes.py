@@ -169,7 +169,7 @@ class RowScheme:
        # If the subrow memo vector has not been initialized for the puzzle depth
         string[depth - 1] = self.parent_row
         if depth == 1:
-            sys.stdout.write(f"\r Counting using memoization... {self.parent_row.seed / 2**self.parent_row.length:.2f}%"  + ' ' * 20)
+            sys.stdout.write(f"\rCounting with debugger... {self.parent_row.seed / 2**self.parent_row.length:.2f}%"  + ' ' * 20)
             sys.stdout.flush()
         # Keep track of count at this node, always starts at zero
         count = 0
