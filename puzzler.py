@@ -38,7 +38,8 @@ class Puzzler:
             if not path.exists():
                 path.mkdir()
             with open(f"debug\\debug_[{self.depth}x{self.length}].txt", 'w') as file:
-                file.write(f"Preparing file for debug...\n\n")
+                file.write(f"Puzzle Debug: Size: [{self.depth} x {self.length}]\n")
+                file.write(f"Total Pattern Count: {self.total_pattern_count}\n\n")
             self.count_patterns()
 
         print(f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n")
