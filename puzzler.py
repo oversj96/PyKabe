@@ -71,10 +71,19 @@ class Puzzler:
                     self.good_patterns += scheme.traverse_with_memoization(water, False, 1, self.depth)
 
 
+def scrub_input_and_run():
+    while True:
+        try:
+            length = int(input("Please enter the row length of the puzzle: "))
+            depth  = int(input("Please enter the depth/row count of the puzzle: "))
+            debug  = input("Use debugger? Warning: this will dramatically slow the counting process to exponential speed! [y/n]: ")
+            if length < 2 or depth < 2:
+                raise ValueError("A number less than 2 was entered for either dimension, please try again.")
+            else:
+                break
+    Puzzler(length, depth, debug)
+
+
 if __name__ == "__main__":
-    # Test the rgs function and count the partition sets which should result in a Bell Number.
-    # Input should be from 0 to 10 as linearly higher numbers are exponentially harder to build
-    # the set of all partitions of a set for.
-    puzzler = Puzzler(int(input("Please enter the row length of the puzzle: ")),
-                      int(input("Please enter the depth/row count of the puzzle: ")),
-                      input("Use debugger? Warning: this will dramatically slow the counting process to exponential speed! [y/n]: "))
+    # Get the correct inputs and run the program
+    scrub_input_and_run()
