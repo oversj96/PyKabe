@@ -39,7 +39,8 @@ class Puzzler:
                 path.mkdir()
             with open(f"debug\\debug_[{self.depth}x{self.length}].txt", 'w') as file:
                 file.write(f"Puzzle Debug: Size: [{self.depth} x {self.length}]\n")
-                file.write(f"Total Pattern Count: {self.total_pattern_count}\n\n")
+                file.write(f"Total Possible Pattern Count: {self.total_pattern_count}\n")
+                file.write(f"Total Legal Patterns: Execution must be allowed to finish...\n")
             self.count_patterns()
 
         print(f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n")
@@ -57,7 +58,12 @@ class Puzzler:
 
                     self.good_patterns += scheme.traverse(['' for i in range(0, self.depth)], water, False, 1, self.depth)
                     #self.good_patterns += scheme.traverse_with_memoization(water, False, 1, self.depth)
-
+        with open(f"debug\\debug_[{self.depth}x{self.length}].txt", "r") as file:
+            contents = file.readlines()
+        with open(f"debug\\debug_[{self.depth}x{self.length}].txt", "w") as file:
+            contents.insert(3, "\n\n")
+            contents[2] = f"Total Legal Patterns: {self.good_patterns}"        
+            file.writelines(contents)
     # Utilizes memoization and converts the problem into a polynomial time solution
     # The loss in speed this time around comes from row mapping
     def count_patterns_memoized(self):
