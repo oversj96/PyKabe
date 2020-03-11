@@ -1,7 +1,4 @@
 import segment as s
-# import schemes as sch
-# import row as r
-# from restrictive_growth_strings import restrictive_growth_strings as rgs
 
 
 def build_part_set(bottom_row, top_row_scheme):

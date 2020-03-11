@@ -1,3 +1,5 @@
+import sys
+
 import row
 import segment as s
 
@@ -106,7 +108,8 @@ class RowScheme:
             self.memos = [0 for i in range(0, base_depth)]
         
         if depth == 1:
-            print(f"{self.parent_row.seed / 2**self.parent_row.length:.2%}")
+            sys.stdout.write(f"\rCounting using memoization... {(self.parent_row.seed / 2**self.parent_row.length) * 100:.2f}%"  + ' ' * 20)
+            sys.stdout.flush()
 
         count = 0
         
@@ -166,7 +169,8 @@ class RowScheme:
        # If the subrow memo vector has not been initialized for the puzzle depth
         string[depth - 1] = self.parent_row
         if depth == 1:
-            print(f"{self.parent_row.seed / 2**self.parent_row.length:.2%}")
+            sys.stdout.write(f"\r Counting using memoization... {self.parent_row.seed / 2**self.parent_row.length:.2f}%"  + ' ' * 20)
+            sys.stdout.flush()
         # Keep track of count at this node, always starts at zero
         count = 0
 

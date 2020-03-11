@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import row as r
@@ -20,21 +21,19 @@ class Puzzler:
             self.scheme_count += len(row.schemes)
 
         # Make each subrow aware of all other subrows
-        print("\nMapping sub rows...\n")
+        print("\n")
         for top in self.rows:
-            print(f"{top.seed / 2**self.length:.2%}")
+            print(f"Mapping sub rows... {top.seed / self.length:.2f}%", end="\r")
             for bottom in self.rows:
                 if not top.forms_pool(bottom) and top.is_trivially_contiguous(bottom):
                     r.map_subrows(top, bottom)
-        print("\nSub row mapping complete!\n")
+        print("Sub row mapping complete!" + ' ' * 20 + "\n")
 
-        print("Counting", end=" ")
+
         if self.fast_count:
-            print("using memoization...\n")
             self.count_patterns_memoized()
         else:
             path = Path.cwd() / 'debug'
-            print("using debugger functions...\n")
             if not path.exists():
                 path.mkdir()
             with open(f"debug\\debug_[{self.depth}x{self.length}].txt", 'w') as file:
@@ -42,6 +41,7 @@ class Puzzler:
                 file.write(f"Total Possible Pattern Count: {self.total_pattern_count}\n")
                 file.write(f"Total Legal Patterns: Execution must be allowed to finish...\n")
             self.count_patterns()
+        sys.stdout.write("\rCounting Complete!" + ' ' * 20 + "\n")
 
         print(f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n")
         print(f"{self.good_patterns / self.total_pattern_count:.{self.length - 2}%} were good patterns.\n")
