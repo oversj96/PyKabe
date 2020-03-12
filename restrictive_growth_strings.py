@@ -49,7 +49,7 @@ if __name__ == "__main__":
     '''A quick way to check if the module works correctly is to compare
     the partition count to the bell number of the correct 'n' size.
     For a set of 7 elements, the partition count should be 877 by Bell's numbers.'''
-    strings = restrictive_growth_strings(4)
+    strings = restrictive_growth_strings(7)
     for string in strings:
         print(string)
     print(len(strings))

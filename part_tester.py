@@ -2,7 +2,7 @@ import segment as s
 
 
 def build_part_set(bottom_row, top_row_scheme):
-    if not top_row_scheme.partition_scheme or len(bottom_row.segments) == 0:
+    if not top_row_scheme.partition_set or len(bottom_row.segments) == 0:
         return []
     # Construct a new partiton set to be used
     new_set = [i for i in range(0, len(bottom_row.segments))]
@@ -13,14 +13,14 @@ def build_part_set(bottom_row, top_row_scheme):
             # determine of the bottom row connects to the top
             if bottom_row.segments[i].connects(top_row_scheme.segments[j]):
                 # If it does, the new partition set is updated with the number
-                new_set[i] = top_row_scheme.partition_scheme[j]
+                new_set[i] = top_row_scheme.partition_set[j]
             
             else:
                 if len(bottom_row.segments) > len(top_row_scheme.parent_row.segments):
-                    for k in range(i, len(top_row_scheme.partition_scheme)):
-                        top_row_scheme.partition_scheme[k] += 1
+                    for k in range(i, len(top_row_scheme.partition_set)):
+                        top_row_scheme.partition_set[k] += 1
 
-    for i in range(0, len(set(top_row_scheme.partition_scheme)) - 1):
+    for i in range(0, len(set(top_row_scheme.partition_set)) - 1):
         key = new_set[i]
         for j in range(i, len(new_set)):
             if new_set[j] == key:
@@ -31,20 +31,73 @@ def build_part_set(bottom_row, top_row_scheme):
 
 
 def map_part_set(top_row_scheme, bottom_row):
-    bottom_connections = []
+    '''Given a top row bitset, a top row partition scheme, and a bottom row bitset, return
+    the bottom row scheme.'''
+    if len(bottom_row.segments) == 0:
+        return []
 
-    for i in range(0, len(bottom_row.segments)):
-        conns = []
-        for j in range(0, len(top_row_scheme.segments)):
-            if top_row_scheme.segments[j].connects(bottom_row.segments[i]):
-                conns.append(j)
-        bottom_connections.append(conns.copy())
+    elif len(top_row_scheme.parent_row.segments) == 0:
+        return [i for i in range(0, len(bottom_row.segments))]
+
+    # The horror. Begin a long process of partition matching. Documentation coming soon.
+    # Easily some of the worst code I've written, but it was the only way I could figure
+    # out how to make this work.
+    else:
+        bottom_partition = [len(bottom_row.segments) for i in range(0, len(bottom_row.segments))]
+        top_partition = top_row_scheme.partition_set.copy()
+        
+        reachable_bottom_seg_ids = []
+        partition_set = sorted(set(top_row_scheme.partition_set))
+        for partition in partition_set:
+            seg_ids = []
+            for i in range(0, len(top_row_scheme.segments)):
+                if top_row_scheme.partition_set[i] == partition:
+                    for j in range(0, len(bottom_row.segments)):
+                        if top_row_scheme.segments[i].connects(bottom_row.segments[j]):
+                            seg_ids.append(j)
+            reachable_bottom_seg_ids.append(seg_ids.copy())
+
+        visited = [False for i in range(0, len(bottom_row.segments))]
+        isolated = [False for i in range(0, len(bottom_row.segments))]
+        for i in range(0, len(bottom_row.segments)):
+            for j in range(0, len(top_row_scheme.segments)):
+                if top_row_scheme.segments[j].connects(bottom_row.segments[i]):
+                    isolated[i] = False
+                    break
+
+        min_vals = []
+        for i in range(0, len(reachable_bottom_seg_ids)):
+            min_val = 100
+            for seg_id in reachable_bottom_seg_ids[i]:
+                if min_val > seg_id:
+                    min_val = seg_id
+            for j in range(0, len(reachable_bottom_seg_ids[i])):
+                if not visited[reachable_bottom_seg_ids[i][j]]:
+                    bottom_partition[reachable_bottom_seg_ids[i][j]] = min_val
+                    visited[reachable_bottom_seg_ids[i][j]] = True
+
+        used_numbers = [i for i in range(len(bottom_partition), -1, -1)]
+        for i in range(0, len(bottom_partition)):
+            if i <= bottom_partition[i]:
+                key = bottom_partition[i]
+                repl = used_numbers.pop()
+                for j in range(i, len(bottom_partition)):
+                    if bottom_partition[j] == key:
+                        bottom_partition[j] = repl
+                    else:
+                        if bottom_partition[j] >= repl:
+                            bottom_partition[j] += 1
+        
+        return bottom_partition
+
+        
+
+
     
-    partition_set = []
-    
-    for i in range(0, len(2)):
-        print()           
-    pass
+
+
+
+
 
 def determine_part_set(bottom_row, top_row_scheme):
 
@@ -53,7 +106,7 @@ def determine_part_set(bottom_row, top_row_scheme):
     for i in range(0, len(bottom_row.segments)):
         for j in range(0, len(top_row_scheme.segments)):
             if bottom_row.segments[i].connects(top_row_scheme.segments[j]):
-                part_hit[i] = top_row_scheme.partition_scheme[j]
+                part_hit[i] = top_row_scheme.partition_set[j]
     
     new_set = [-1 for i in range(0, len(bottom_row.segments))]
     changed = [False for i in range(0, len(bottom_row.segments))]

@@ -1,25 +1,23 @@
-import schemes as sc
 import segment as s
-from part_tester import determine_part_set
+from node import Node
+from part_tester import map_part_set as mps
 
 
 class Row:
-
-
     def __init__(self, seed, length, partition_sets):
         self.seed = seed
         self.length = length
-        self.partition_sets = partition_sets
+        self.set_of_partition_sets = partition_sets
         self.bits = []
         self.generate_bits()
         self.segments = []
         self.determine_segments()
-        self.is_last_row = len(self.segments) == 0
-        self.schemes = []
-        if not self.is_last_row:
-            self.generate_schemes()
+        self.is_partitionless_row = len(self.segments) == 0
+        self.nodes = []
+        if not self.is_partitionless_row:
+            self.generate_nodes()
         else:
-            self.generate_last_row_schemes()
+            self.generate_last_row_nodes()
         
 
     def generate_bits(self):
@@ -45,17 +43,17 @@ class Row:
                 del columns[:]
 
 
-    def generate_schemes(self):
+    def generate_nodes(self):
         # Loop through the sets of a certain size of segments
-        for scheme in self.partition_sets[len(self.segments)]:
-            if max(scheme) == len(scheme) - 1:
-                self.schemes.append(sc.RowScheme(self, self.segments, True, False, scheme))
+        for partition_set in self.set_of_partition_sets[len(self.segments)]:
+            if max(partition_set) == len(partition_set) - 1:
+                self.nodes.append(Node(self, self.segments, True, False, partition_set))
             else:
-                self.schemes.append(sc.RowScheme(self, self.segments, False, False, scheme))
+                self.nodes.append(Node(self, self.segments, False, False, partition_set))
 
 
-    def generate_last_row_schemes(self):
-        self.schemes.append(sc.RowScheme(self, self.segments, True, True, []))
+    def generate_last_row_nodes(self):
+        self.nodes.append(Node(self, self.segments, True, True, []))
 
     
     def forms_pool(self, other):
@@ -65,8 +63,9 @@ class Row:
                     return True
         return False
 
+
     def is_trivially_contiguous(self, other):
-        if self.is_last_row or other.is_last_row:
+        if self.is_partitionless_row or other.is_partitionless_row:
             return True
         # Deal with partitionless row case separate
         for i in range(0, len(self.bits)):
@@ -76,42 +75,43 @@ class Row:
                     
     
 def map_subrows(top, bottom):
-    for top_scheme in top.schemes:
-        key_set = determine_part_set(bottom, top_scheme)
-        for bottom_scheme in bottom.schemes:
+    for top_node in top.nodes:
+        legal_set = mps(top_node, bottom)
+        for bottom_node in bottom.nodes:
             # If the desired partition set is matched
-            if key_set == bottom_scheme.partition_scheme:
+            if legal_set == bottom_node.partition_set:
                 
-                # Check if scheme succeeds
-                if top_scheme.succeeds(bottom_scheme):
-                    top_scheme.successors.append(bottom_scheme)
+                # Check if node is_inode
+                if top_node.is_inode(bottom_node):
+                    top_node.inodes.append(bottom_node)
 
-                # Check if scheme
-                if top_scheme.finalizes(bottom_scheme):
-                    top_scheme.finalizers.append(bottom_scheme)
-    # 
+                # Check if node
+                if top_node.is_leaf_node(bottom_node):
+                    top_node.leaf_nodes.append(bottom_node)
+    #       
+                break
     # if not top.forms_pool(bottom):
-    #     for scheme in top.schemes:
-    #         key_set = determine_part_set(bottom, scheme)
-    #         for i in range(0, len(bottom.schemes)):
-    #             if bottom.schemes[i].partition_scheme == key_set:
-    #                 if scheme.is_contiguous_with(bottom.schemes[i]):
-    #                     scheme.successors.append(bottom.schemes[i])   
-    #                     if len(bottom.schemes[i].segments) == 1:
-    #                         scheme.single_partition_successors.append(bottom.schemes[i])              
-    #                         scheme.finalizers.append(bottom.schemes[i])
-    #                     if len(set(scheme.partition_scheme)) <= 1 and not bottom.schemes[i].partition_scheme:
-    #                         scheme.finalizers.append(bottom.schemes[i])
+    #     for node in top.nodes:
+    #         key_set = determine_part_set(bottom, node)
+    #         for i in range(0, len(bottom.nodes)):
+    #             if bottom.nodes[i].partition_node == key_set:
+    #                 if node.is_contiguous_with(bottom.nodes[i]):
+    #                     node.inodes.append(bottom.nodes[i])   
+    #                     if len(bottom.nodes[i].segments) == 1:
+    #                         node.single_partition_inodes.append(bottom.nodes[i])              
+    #                         node.leaf_nodes.append(bottom.nodes[i])
+    #                     if len(set(node.partition_node)) <= 1 and not bottom.nodes[i].partition_node:
+    #                         node.leaf_nodes.append(bottom.nodes[i])
     #             else:
-    #                 if not scheme.partition_scheme:
-    #                     for i in range(0, len(bottom.schemes)):
-    #                         if bottom.schemes[i].partition_scheme \
-    #                         and max(bottom.schemes[i].partition_scheme) == len(bottom.schemes[i].partition_scheme) - 1:
-    #                             scheme.successors.append(bottom.schemes[i])
+    #                 if not node.partition_node:
+    #                     for i in range(0, len(bottom.nodes)):
+    #                         if bottom.nodes[i].partition_node \
+    #                         and max(bottom.nodes[i].partition_node) == len(bottom.nodes[i].partition_node) - 1:
+    #                             node.inodes.append(bottom.nodes[i])
     #                         else:
-    #                             if not bottom.schemes[i].partition_scheme:
-    #                                 scheme.successor.append(bottom.schemes[i])
-    #                                 scheme.finalizers.append(bottom.schemes[i])
+    #                             if not bottom.nodes[i].partition_node:
+    #                                 node.successor.append(bottom.nodes[i])
+    #                                 node.leaf_nodes.append(bottom.nodes[i])
 
                                 
 
@@ -119,10 +119,10 @@ def map_subrows(top, bottom):
 
     # def map_subrows(self, other):
     #     if not self.forms_pool(other):
-    #         for self_subrow in self.schemes:
-    #             for other_subrow in other.schemes:
+    #         for self_subrow in self.nodes:
+    #             for other_subrow in other.nodes:
     #                 key_set = build_part_set(other_subrow.parent_row, self_subrow)
     #                 if other_subrow.is_contiguous_with(self_subrow):
-    #                     self_subrow.successors.append(other_subrow)
-    #                     if len(other_subrow.partition_scheme) == 1:
-    #                         self_subrow.finalizers.append(other_subrow)
+    #                     self_subrow.inodes.append(other_subrow)
+    #                     if len(other_subrow.partition_node) == 1:
+    #                         self_subrow.leaf_nodes.append(other_subrow)

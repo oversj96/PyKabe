@@ -1,4 +1,6 @@
-Preparing file for debug...
+Puzzle Debug: Size: [4 x 4]
+Total Possible Pattern Count: 65536
+Total Legal Patterns: 3756
 
 1
 0 0 0 0   0
