@@ -126,12 +126,8 @@ class Node:
             if depth == base_depth - 1:
                 for leaf_node in self.leaf_nodes:
 
-                    # If forced end is set to True
-                    if end:
-                        if leaf_node.is_partitionless:
-                            count += 1
-                    else:
-                        count += 1
+                    # If the next row is the final row, just count the leaf nodes.
+                    count = len(self.leaf_nodes)
 
             elif depth != base_depth - 1:
 
