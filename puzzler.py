@@ -24,7 +24,7 @@ class Puzzler:
             print(f"Mapping sub rows... {(top.seed / 2**self.length)*100:.2f}%", end="\r")
             for bottom in self.rows:
                 if not top.forms_pool(bottom) and top.is_trivially_contiguous(bottom):
-                    r.map_subrows(top, bottom)
+                    r.build_tree(top, bottom)
         print("Sub row mapping complete!" + ' ' * 20 + "\n")
 
 
@@ -43,6 +43,7 @@ class Puzzler:
 
         print(f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n")
         print(f"{self.good_patterns / self.total_pattern_count:.{self.length - 2}%} were good patterns.\n")
+        print(f"Nodes traversed: {self.rows[0].nodes[0].recursion_calls}\n")
 
     
     def count_patterns(self):

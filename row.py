@@ -1,6 +1,6 @@
 import segment as s
 from node import Node
-from part_tester import map_part_set as mps
+from part_tester import build_part_set as bps
 
 
 class Row:
@@ -74,9 +74,9 @@ class Row:
         return False
                     
     
-def map_subrows(top, bottom):
+def build_tree(top, bottom):
     for top_node in top.nodes:
-        legal_set = mps(top_node, bottom)
+        legal_set = bps(top_node, bottom)
         for bottom_node in bottom.nodes:
             # If the desired partition set is matched
             if legal_set == bottom_node.partition_set:

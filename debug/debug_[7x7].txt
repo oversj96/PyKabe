@@ -1,0 +1,3 @@
+Puzzle Debug: Size: [7 x 7]
+Total Possible Pattern Count: 562949953421312
+Total Legal Patterns: Execution must be allowed to finish...

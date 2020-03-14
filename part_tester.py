@@ -90,42 +90,73 @@ def map_part_set(top_row_scheme, bottom_row):
         
         return bottom_partition
 
-        
+
+def build_part_set(top_node, bottom_row):
+    if len(bottom_row.segments) == 0:
+        return []
+
+    elif len(top_node.parent_row.segments) == 0:
+        return [i for i in range(0, len(bottom_row.segments))]
+
+    else:
+        top_parts =  top_node.partition_set
+
+        connective_list = []
+        for i in range(0, len(bottom_row.segments)):
+            connections  = []
+            for j in range(0, len(top_parts)):
+                if bottom_row.segments[i].connects(top_node.segments[j]):
+                    connections.append(top_parts[j])
+            connective_list.append(connections.copy())
+
+        min_vals = []
+        for i in range(0, len(connective_list)):
+            if len(connective_list[i]) != 0:
+                min_vals.append(min(connective_list[i]))
+            else:
+                min_vals.append(-1)
+
+        for i in range(0, len(min_vals)):
+            if min_vals[i] != None and min_vals[i] > 0:
+                j = 0
+                while j < len(connective_list):
+                    if j != i:
+                        if min_vals[i] in connective_list[j]:
+                            context_min = min(connective_list[j])
+                            if context_min != min_vals[i]:
+                                min_vals[i] = context_min
+                                j = 0
+                            else:
+                                j += 1
+                        else:
+                            j += 1
+                    else:
+                        j += 1
+
+        # Set -1 vals to unique partition
+        for i in range(0, len(min_vals)):
+            if min_vals[i] == -1:
+                min_vals[i] = max(min_vals) + 1
 
 
-    
+        seen = []
+        locations_of_seen = []
+        for i in range(0, len(min_vals)):
+            if min_vals[i] not in seen:
+                seen.append(min_vals[i])
+                locations = []
+                for j in range(0, len(min_vals)):
+                    if min_vals[j] == min_vals[i]:
+                        locations.append(j)
+                locations_of_seen.append(locations.copy())
+
+        for i in range(0, len(locations_of_seen)):
+            for loc in locations_of_seen[i]:
+                min_vals[loc] = i
+            
+        return min_vals
 
 
-
-
-
-def determine_part_set(bottom_row, top_row_scheme):
-
-    part_hit = [None for i in range(0, len(bottom_row.segments))]
-
-    for i in range(0, len(bottom_row.segments)):
-        for j in range(0, len(top_row_scheme.segments)):
-            if bottom_row.segments[i].connects(top_row_scheme.segments[j]):
-                part_hit[i] = top_row_scheme.partition_set[j]
-    
-    new_set = [-1 for i in range(0, len(bottom_row.segments))]
-    changed = [False for i in range(0, len(bottom_row.segments))]
-    for i in range(0, len(bottom_row.segments)):
-        next_part_num = max(new_set) + 1
-        if part_hit[i] == None:
-            new_set[i] = next_part_num
-        else:
-            key = part_hit[i]
-            for j in range(i, len(bottom_row.segments)):
-                if part_hit[j] == key and not changed[j]:
-                    new_set[j] = next_part_num
-                    changed[j] = True
-
-    return new_set if -1 not in new_set else print(f"Error: set with -1 detected! Seed: {bottom_row.parent_row.seed}")
-
-
-
-    
 
 
 

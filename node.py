@@ -2,12 +2,13 @@ import sys
 
 import row
 import segment as s
+from Debugger.matrix import Matrix
 
 
 class Node:
 
     debug_count = 0
-
+    recursion_calls = 0
 
     def __init__(self, parent_row, segments, is_start, is_partitionless, partition_set):
         self.parent_row = parent_row
@@ -52,6 +53,7 @@ class Node:
     def is_leaf_node(self, other):
         # If partitionless scheme
         if self.is_partitionless:
+            # Only partitionless or single partition set is allowed.
             if other.is_partitionless:
                 return True
             elif len(other.segments) == 1:
@@ -64,16 +66,15 @@ class Node:
             else:
                 if len(set(other.partition_set)) == 1:
                     return self.connects_all_partitions(other)
+
         
         # If multipart scheme
         elif len(set(self.partition_set)) > 1:
-            if other.is_partitionless:
-                 return False
-            else:
-                if len(other.segments) >= 1 and len(set(other.partition_set)) == 1:
-                    return self.connects_all_partitions(other)
-        else:
-            return False
+            # Only single partition set is allowed
+            if len(set(other.partition_set)) == 1:
+                return self.connects_all_partitions(other)
+                    
+        return False
 
 
     def connects_all_partitions(self, other):
@@ -104,12 +105,12 @@ class Node:
     def traverse_with_memoization(self, water, end, depth, base_depth):
         # If the subrow memo vector has not been initialized for the puzzle depth
         if not self.depth_memoized:
+            Node.recursion_calls += 1
             self.depth_memoized = [False for i in range(0, base_depth)]
             self.memos = [0 for i in range(0, base_depth)]
         
         if depth == 1:
             sys.stdout.write(f"\rCounting using memoization... {(self.parent_row.seed / 2**self.parent_row.length) * 100:.2f}%"  + ' ' * 20)
-            sys.stdout.flush()
 
         count = 0
         
@@ -160,13 +161,13 @@ class Node:
         return count
 
 
-    def traverse(self, string, water, end, depth, base_depth):      
-        '''Travereses without memoizing, but allows for pattern printouts as a trade off.'''
-       # If the subrow memo vector has not been initialized for the puzzle depth
+    def traverse(self, string, water, end, depth, base_depth):     
+        Node.recursion_calls += 1 
+        '''Traverses without memoizing, but allows for pattern printouts as a trade off.'''
         string[depth - 1] = self.parent_row
         if depth == 1:
             sys.stdout.write(f"\rCounting with debugger... {(self.parent_row.seed / 2**self.parent_row.length) * 100:.2f}%"  + ' ' * 20)
-            sys.stdout.flush()
+
         # Keep track of count at this node, always starts at zero
         count = 0
 
@@ -211,21 +212,27 @@ class Node:
         else:
             print("breakpoint print out")
 
-        #print(f"Seed: {self.parent_row.seed}, Depth: {depth}, Count: {count}")
         return count
 
 
     def print_puzzle(self, string):
         length = len(string[0].bits)
         depth = len(string)
-        with open(f"debug\\debug_[{depth}x{length}].txt", 'a') as file:
-            Node.debug_count += 1
-            file.write(f"{Node.debug_count}\n")
-            for row in string:
-                for bit in row.bits:
-                    if bit == 1:
-                        file.write("1 ")
-                    else:
-                        file.write(f"0 ")
-                file.write(f"  {row.seed}\n")        
-            file.write("\n")
+        Node.debug_count += 1
+        if Node.debug_count % 10000 == 0:
+            print(f"\r\n{Node.debug_count}" + ' ' * 20)
+            rows = [string[i].bits for i in range(0, len(string))]
+            mat = Matrix(self.parent_row.length, Node.debug_count, rows, [], "none")
+            mat.test_puzzle(0, 0, 1)
+            if mat.problem_type == "Illegal Puzzle":
+                with open(f"debug\\debug_[{depth}x{length}].txt", 'a') as file:
+                    
+                    file.write(f"{Node.debug_count}\n")
+                    for row in string:
+                        for bit in row.bits:
+                            if bit == 1:
+                                file.write("1 ")
+                            else:
+                                file.write(f"0 ")
+                        file.write(f"  {row.seed}\n")        
+                    file.write("\n")
