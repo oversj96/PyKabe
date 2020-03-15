@@ -1,5 +1,4 @@
 import sys
-import timeit
 
 import row
 import segment as s
@@ -239,7 +238,7 @@ class Node:
             sys.stdout.write(
                 f"\rCounting with debugger... {(Node.current_seed / 2**self.parent_row.length) * 100:.2f}%"
                 + f"  Puzzles Count: {Node.debug_count:,}"
-                + f"  Puzzles Manually Tested: {Node.debug_count // debug_interval:,}"                
+                + f"  Puzzles Manually Tested: {Node.debug_count // debug_interval:,}"
             )
             sys.stdout.flush()
 
@@ -248,7 +247,9 @@ class Node:
                 self.parent_row.length, Node.debug_count, rows, [], "none"
             )
             if mat.water_count > 0:
-                mat.test_puzzle(mat.first_water_point[0], mat.first_water_point[1], 1)
+                mat.test_puzzle(
+                    mat.first_water_point[0], mat.first_water_point[1], 1
+                )
 
                 if mat.problem_type == "Illegal Puzzle":
                     sys.stdout.write(
@@ -257,7 +258,9 @@ class Node:
                         + f"Debug Count: {Node.debug_count}\n"
                         + f"See output file for this matrix size for more info.\n"
                     )
-                    with open(f"debug\\debug_[{depth}x{length}].txt", "a") as file:
+                    with open(
+                        f"debug\\debug_[{depth}x{length}].txt", "a"
+                    ) as file:
 
                         file.write(f"{Node.debug_count}\n")
                         for row in string:

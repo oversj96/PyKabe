@@ -2,7 +2,7 @@ import concurrent.futures
 import sys
 from pathlib import Path
 
-import yappi
+# import yappi
 
 import row as r
 from restrictive_growth_strings import restrictive_growth_strings as rgs
@@ -140,15 +140,15 @@ def scrub_input_and_run(time=False):
         except ValueError as ve:
             print(ve)
 
-    if time:
-        yappi.set_clock_type("cpu")
-        yappi.start()
+    # if time:
+    #     yappi.set_clock_type("cpu")
+    #     yappi.start()
 
     p = Puzzler(length, depth, debug)
 
-    if time:
-        yappi.get_func_stats().print_all()
-        # yappi.get_thread_stats().print_all()
+    # if time:
+    #     yappi.get_func_stats().print_all()
+    #     # yappi.get_thread_stats().print_all()
 
 
 if __name__ == "__main__":
