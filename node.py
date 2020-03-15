@@ -233,12 +233,14 @@ class Node:
         length = len(string[0].bits)
         depth = len(string)
         Node.debug_count += 1
-        if Node.debug_count % 1 == 0:
+        debug_interval = 50
+        if Node.debug_count % debug_interval == 0:
 
             sys.stdout.write(
                 f"\rCounting with debugger... {(Node.current_seed / 2**self.parent_row.length) * 100:.2f}%"
-                + f"  Puzzles Manually Tested: {Node.debug_count}"
-                + " " * 40
+                + f"  Puzzles Count: {Node.debug_count:,}"
+                + f"  Puzzles Manually Tested: {Node.debug_count // debug_interval:,}"   
+                + " " * 70
             )
 
             rows = [string[i].bits for i in range(0, len(string))]
