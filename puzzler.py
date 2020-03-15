@@ -36,7 +36,7 @@ class Puzzler:
                         bottom
                     ) and top.is_trivially_contiguous(bottom):
                         executor.submit(r.build_tree, top, bottom).result()
-        print("Sub row mapping complete!" + " " * 20 + "\n")
+        print("Sub row mapping complete!" + " " * 60 + "\n")
 
         # There's almost no reason to multithread this. It's already instantaneous.
         if self.fast_count:
@@ -58,7 +58,7 @@ class Puzzler:
                     f"Total Legal Patterns: Execution must be allowed to finish...\n"
                 )
             self.count_patterns()
-        sys.stdout.write("\rCounting Complete!" + " " * 20 + "\n")
+        sys.stdout.write("\rCounting Complete!" + " " * 80 + "\n")
 
         print(
             f"\nThere are {self.good_patterns:,} legal patterns in a [{self.depth} x {self.length}] nurikabe game. There were {self.total_pattern_count:,} possible patterns.\n"

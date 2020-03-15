@@ -10,6 +10,7 @@ class Node:
 
     debug_count = 0
     recursion_calls = 0
+    current_seed = 0
 
     def __init__(
         self, parent_row, segments, is_start, is_partitionless, partition_set
@@ -172,11 +173,9 @@ class Node:
         Node.recursion_calls += 1
         """Traverses without memoizing, but allows for pattern printouts as a trade off."""
         string[depth - 1] = self.parent_row
+
         if depth == 1:
-            sys.stdout.write(
-                f"\rCounting with debugger... {(self.parent_row.seed / 2**self.parent_row.length) * 100:.2f}%"
-                + " " * 20
-            )
+            Node.current_seed = self.parent_row.seed
 
         # Keep track of count at this node, always starts at zero
         count = 0
@@ -235,21 +234,35 @@ class Node:
         depth = len(string)
         Node.debug_count += 1
         if Node.debug_count % 1 == 0:
-            print(f"\r{Node.debug_count}" + " " * 20)
+
+            sys.stdout.write(
+                f"\rCounting with debugger... {(Node.current_seed / 2**self.parent_row.length) * 100:.2f}%"
+                + f"  Puzzles Manually Tested: {Node.debug_count}"
+                + " " * 40
+            )
+
             rows = [string[i].bits for i in range(0, len(string))]
             mat = Matrix(
                 self.parent_row.length, Node.debug_count, rows, [], "none"
             )
-            mat.test_puzzle(0, 0, 1)
-            if mat.problem_type == "Illegal Puzzle":
-                with open(f"debug\\debug_[{depth}x{length}].txt", "a") as file:
+            if mat.water_count > 0:
+                mat.test_puzzle(mat.first_water_point[0], mat.first_water_point[1], 1)
 
-                    file.write(f"{Node.debug_count}\n")
-                    for row in string:
-                        for bit in row.bits:
-                            if bit == 1:
-                                file.write("1 ")
-                            else:
-                                file.write(f"0 ")
-                        file.write(f"  {row.seed}\n")
-                    file.write("\n")
+                if mat.problem_type == "Illegal Puzzle":
+                    sys.stdout.write(
+                        f"\n!! Illegal Puzzle Warning !!\n"
+                        + f"Puzzle Seed: {mat.matrix_seed}\n"
+                        + f"Debug Count: {Node.debug_count}\n"
+                        + f"See output file for this matrix size for more info.\n"
+                    )
+                    with open(f"debug\\debug_[{depth}x{length}].txt", "a") as file:
+
+                        file.write(f"{Node.debug_count}\n")
+                        for row in string:
+                            for bit in row.bits:
+                                if bit == 1:
+                                    file.write("1 ")
+                                else:
+                                    file.write(f"0 ")
+                            file.write(f"  {row.seed}\n")
+                        file.write("\n")
