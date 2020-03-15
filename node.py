@@ -239,9 +239,9 @@ class Node:
             sys.stdout.write(
                 f"\rCounting with debugger... {(Node.current_seed / 2**self.parent_row.length) * 100:.2f}%"
                 + f"  Puzzles Count: {Node.debug_count:,}"
-                + f"  Puzzles Manually Tested: {Node.debug_count // debug_interval:,}"   
-                + " " * 70
+                + f"  Puzzles Manually Tested: {Node.debug_count // debug_interval:,}"                
             )
+            sys.stdout.flush()
 
             rows = [string[i].bits for i in range(0, len(string))]
             mat = Matrix(
